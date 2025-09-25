@@ -1,0 +1,230 @@
+---
+applyTo: '**'
+---
+# Data Cleaning App PRD
+
+## Overview
+A web-based data cleaning application built with Gradio that allows users to upload CSV/XLSX files, explore data through various EDA functions, and perform data cleaning operations with customizable parameters.
+
+## Product Goals
+- Enable users to quickly upload and preview datasets
+- Provide comprehensive data exploration capabilities
+- Offer flexible data cleaning operations with user-configurable parameters
+- Allow continuous data manipulation and export functionality
+
+## User Stories
+
+### 1. Data Upload and Preview
+- As a user, I want to upload CSV or XLSX files so that I can work with my data
+- As a user, I want to preview the first few rows of my dataset so that I can verify the upload was successful
+- As a user, I want to see basic metadata about my dataset (shape, columns, data types)
+
+### 2. Data Exploration
+- As a user, I want to view summary statistics for numerical columns
+- As a user, I want to view value counts for categorical columns
+- As a user, I want to visualize missing values in the dataset
+- As a user, I want to see correlation matrices between numerical variables
+- As user, I want to generate histograms for numerical columns
+
+### 3. Data Cleaning Operations
+- As a user, I want to handle missing values with multiple strategies (delete, mean, median, mode, KNN)
+- As a user, I want to remove duplicate rows
+- As a user, I want to remove outliers using IQR or Z-score methods
+- As a user, I want to convert data types for columns
+- As a user, I want to rename columns
+- As a user, I want to filter rows based on conditions
+
+### 4. Export and Continue
+- As a user, I want to download the cleaned dataset as CSV or XLSX
+- As a user, I want to continue performing EDA operations on the cleaned data
+- As a user, I want to apply additional cleaning operations after previous operations
+
+## Technical Requirements
+
+### Core Features
+# Data Cleaning App Structure
+
+## File Upload and Preview Section
+- File upload component (CSV/XLSX)
+- Preview table showing first 10 rows
+- Dataset metadata display (shape, columns, dtypes)
+- Clear button to reset the application
+
+## Exploratory Data Analysis (EDA) Section
+### Summary Statistics
+- Button: "Show Summary Statistics"
+- Displays descriptive statistics for numerical columns
+
+### Value Counts
+- Button: "Show Value Counts"
+- Displays value counts for categorical columns
+
+### Missing Values Visualization
+- Button: "Show Missing Values Plot"
+- Heatmap or bar chart showing missing values per column
+
+### Correlation Analysis
+- Button: "Show Correlation Matrix"
+- Heatmap of correlations between numerical variables
+
+### Histograms
+- Button: "Show Histograms"
+- Displays histograms for all numerical columns
+
+## Data Cleaning Operations Section
+### Missing Value Handling
+- Dropdown: "Missing Value Strategy" 
+  - Options: ["Delete", "Mean", "Median", "Mode", "KNN"]
+- For KNN: Additional parameter input for number of neighbors
+- Button: "Handle Missing Values"
+
+### Duplicate Removal
+- Checkbox: "Remove Duplicates"
+- Button: "Remove Duplicate Rows"
+
+### Outlier Detection and Removal
+- Dropdown: "Outlier Method"
+  - Options: ["IQR", "Z-Score"]
+- For Z-Score: Input for threshold value (default 3)
+- Button: "Remove Outliers"
+
+### Data Type Conversion
+- Dropdown: "Column to Convert"
+- Dropdown: "New Data Type"
+  - Options: ["int", "float", "str", "bool", "datetime"]
+- Button: "Convert Data Types"
+
+### Column Renaming
+- Input field: "Old Column Name"
+- Input field: "New Column Name"
+- Button: "Rename Column"
+
+### Row Filtering
+- Dropdown: "Column for Filter"
+- Dropdown: "Filter Type" 
+  - Options: ["Equal", "Not Equal", "Greater Than", "Less Than", "Contains"]
+- Input field: "Filter Value"
+- Button: "Apply Filter"
+
+## Export and Continue Section
+- Download buttons:
+  - "Download as CSV"
+  - "Download as XLSX"
+- Status indicator showing number of rows/columns after operations
+- Reset button to start over with original data
+
+### Data Processing Flow
+1. File upload → Load data → Display preview
+2. EDA operations → Update visualization components
+3. Cleaning operations → Apply transformations → Update dataset
+4. Export → Save processed data
+
+### Gradio UI Components
+```python
+# Main layout structure
+with gr.Blocks() as demo:
+    # Upload and Preview Section
+    with gr.Row():
+        file_upload = gr.File(label="Upload CSV or XLSX")
+        preview_table = gr.Dataframe(label="Data Preview", interactive=False)
+    
+    # EDA Section
+    with gr.Row():
+        gr.Button("Show Summary Statistics")
+        gr.Button("Show Value Counts")
+        gr.Button("Show Missing Values Plot")
+        gr.Button("Show Correlation Matrix")
+        gr.Button("Show Histograms")
+    
+    # Cleaning Operations Section
+    with gr.Row():
+        strategy_dropdown = gr.Dropdown(["Delete", "Mean", "Median", "Mode", "KNN"], label="Missing Value Strategy")
+        knn_neighbors = gr.Number(label="KNN Neighbors (for KNN method)", minimum=1, value=5)
+        handle_missing_btn = gr.Button("Handle Missing Values")
+    
+    with gr.Row():
+        remove_duplicates = gr.Checkbox(label="Remove Duplicate Rows")
+        remove_outliers_method = gr.Dropdown(["IQR", "Z-Score"], label="Outlier Method")
+        zscore_threshold = gr.Number(label="Z-Score Threshold", value=3)
+        remove_outliers_btn = gr.Button("Remove Outliers")
+    
+    with gr.Row():
+        convert_column = gr.Dropdown(label="Column to Convert")
+        new_dtype = gr.Dropdown(["int", "float", "str", "bool", "datetime"], label="New Data Type")
+        convert_btn = gr.Button("Convert Data Types")
+    
+    # Export Section
+    with gr.Row():
+        download_csv = gr.Button("Download as CSV")
+        download_xlsx = gr.Button("Download as XLSX")
+```
+
+## User Experience Requirements
+
+### Interface Design
+- Clean, intuitive layout with clear section separation
+- Responsive design that works well on different screen sizes
+- Visual feedback for all user actions
+- Clear status messages and progress indicators
+
+### Error Handling
+- Validate file formats (CSV/XLSX only)
+- Handle empty files gracefully
+- Provide meaningful error messages for invalid operations
+- Validate user inputs before applying operations
+
+## Data Processing Requirements
+
+### Supported Operations
+1. **Missing Value Handling**
+   - Delete rows/columns with missing values
+   - Impute with mean/median/mode
+   - KNN imputation with configurable neighbors
+
+2. **Duplicate Management**
+   - Identify and remove duplicate rows
+   - Options to keep first, last, or all duplicates
+
+3. **Outlier Detection**
+   - IQR method for outlier detection
+   - Z-score method with adjustable threshold
+
+4. **Data Type Conversion**
+   - Convert between common data types
+   - Handle conversion errors gracefully
+
+5. **Column Operations**
+   - Rename columns
+   - Filter rows based on conditions
+
+### Data Validation
+- Validate column names exist before operations
+- Check for valid numerical inputs in parameters
+- Ensure data type conversions are possible
+- Verify that filter conditions make sense for column types
+
+## Export Functionality
+
+### File Formats
+- CSV export with standard CSV formatting
+- XLSX export with proper sheet naming
+- Maintain original data structure and types where possible
+
+### Download Options
+- Button to download current dataset state
+- Progress indicator during download preparation
+- Confirmation message after successful download
+
+## Success Metrics
+1. User can upload files within 5 seconds
+2. EDA operations complete within 30 seconds for datasets < 10MB
+3. Data cleaning operations complete within 60 seconds for datasets < 10MB
+4. 90% user satisfaction with interface usability
+5. 95% successful data export rate
+
+## Future Enhancements
+- Advanced statistical analysis
+- Machine learning-based data quality detection
+- Batch processing for multiple files
+- Cloud storage integration
+- Version control for data cleaning steps

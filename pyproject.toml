@@ -1,7 +1,16 @@
 [project]
 name = "cursor-datacleaner"
 version = "0.1.0"
-description = "Add your description here"
+description = "A web-based data cleaning application built with Gradio for CSV/XLSX file processing"
 readme = "README.md"
 requires-python = ">=3.12"
-dependencies = []
+dependencies = [
+    "gradio>=4.0.0",
+    "pandas>=2.0.0",
+    "numpy>=1.24.0",
+    "matplotlib>=3.7.0",
+    "seaborn>=0.12.0",
+    "scikit-learn>=1.3.0",
+    "openpyxl>=3.1.0",
+    "plotly>=5.15.0"
+]
